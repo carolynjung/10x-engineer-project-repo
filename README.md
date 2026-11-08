@@ -33,7 +33,7 @@ Your job over the next 4 weeks is to transform this into a **production-ready, f
 
 ---
 
-## Quick Start
+## Quick Start: Run Locally
 
 ### Prerequisites
 
@@ -41,19 +41,25 @@ Your job over the next 4 weeks is to transform this into a **production-ready, f
 - Node.js 18+ (for Week 4)
 - Git
 
-### Run Locally
+### Installation Steps
 
-```bash
-# Clone the repo
-git clone <your-repo-url>
-cd promptlab
-
-# Set up backend
-cd backend
-pip install -r requirements.txt
-python main.py
-```
-
+**Clone the Repository**:
+   Open your terminal and run the following command:
+   ```bash
+   git clone <your-repo-url>
+   cd promptlab
+   ```
+**Set Up the Backend**:
+   Navigate to the backend directory and install the required Python packages:
+   ```bash
+   cd backend
+   pip install -r requirements.txt
+   ```
+**Run the Backend**:
+   Start the FastAPI application with the following command:
+   ```bash
+   python main.py
+   ```   
 API runs at: http://localhost:8000
 
 API docs at: http://localhost:8000/docs
@@ -134,15 +140,15 @@ The goal is to learn how to build *better* software *faster* with AI. Don't be a
 | Method | Endpoint | Description | Status |
 |--------|----------|-------------|--------|
 | GET | `/health` | Health check | ✅ Works |
-| GET | `/prompts` | List all prompts | ⚠️ Has issues |
-| GET | `/prompts/{id}` | Get single prompt | ❌ Bug |
+| GET | `/prompts` | List all prompts | ✅ Works |
+| GET | `/prompts/{id}` | Get single prompt | ✅ Works |
 | POST | `/prompts` | Create prompt | ✅ Works |
-| PUT | `/prompts/{id}` | Update prompt | ⚠️ Has issues |
+| PUT | `/prompts/{id}` | Update prompt | ✅ Works |
 | DELETE | `/prompts/{id}` | Delete prompt | ✅ Works |
 | GET | `/collections` | List collections | ✅ Works |
 | GET | `/collections/{id}` | Get collection | ✅ Works |
 | POST | `/collections` | Create collection | ✅ Works |
-| DELETE | `/collections/{id}` | Delete collection | ❌ Bug |
+| DELETE | `/collections/{id}` | Delete collection | ✅ Works |
 
 ---
 

@@ -45,6 +45,22 @@ def list_prompts(
     collection_id: Optional[str] = None,
     search: Optional[str] = None
 ):
+    """List all prompts optionally filtered by collection or search query.
+
+    This endpoint retrieves prompts, filters them by the specified collection ID,
+    or searches based on a query. The results are sorted in descending order
+    by creation date (newest first).
+
+    Args:
+        collection_id: An optional collection ID to filter prompts.
+        search: An optional search string to filter prompts.
+
+    Returns:
+        A PromptList object containing the filtered and sorted prompts.
+
+    Raises:
+        None
+    """
     prompts = storage.get_all_prompts()
     
     # Filter by collection if specified
@@ -64,14 +80,25 @@ def list_prompts(
 
 @app.get("/prompts/{prompt_id}", response_model=Prompt)
 def get_prompt(prompt_id: str):
-    # BUG #1: This will raise a 500 error if prompt doesn't exist
-    # because we're accessing .id on None
-    # Should return 404 instead!
+    """Retrieve a prompt by its unique identifier.
+
+    Args:
+        prompt_id: The unique identifier of the prompt to retrieve.
+
+    Returns:
+        The Prompt object if found.
+
+    Raises:
+        HTTPException: If the prompt with the given ID does not exist (404 Not Found).
+    """
     prompt = storage.get_prompt(prompt_id)
-    
-    # This line causes the bug - accessing attribute on None
-    if prompt.id:
-        return prompt
+    # Check if prompt is not found
+    # None leads to a TypeError
+    if prompt is None:
+        raise HTTPException(status_code=404, detail="Prompt not found")
+
+    # Only if found
+    return prompt
 
 
 @app.post("/prompts", response_model=Prompt, status_code=201)
@@ -88,6 +115,22 @@ def create_prompt(prompt_data: PromptCreate):
 
 @app.put("/prompts/{prompt_id}", response_model=Prompt)
 def update_prompt(prompt_id: str, prompt_data: PromptUpdate):
+    """Update an existing prompt by its unique identifier.
+
+    This endpoint updates only the fields that are provided in the request body
+    and updates the updated_at timestamp to the current time.
+
+    Args:
+        prompt_id: The unique identifier of the prompt to update.
+        prompt_data: An object containing the fields to update in the prompt.
+
+    Returns:
+        The updated Prompt object.
+
+    Raises:
+        HTTPException: If the prompt with the given ID does not exist (404 Not Found).
+        HTTPException: If the prompt is associated with a non-existent collection (400 Bad Request).
+    """
     existing = storage.get_prompt(prompt_id)
     if not existing:
         raise HTTPException(status_code=404, detail="Prompt not found")
@@ -98,8 +141,7 @@ def update_prompt(prompt_id: str, prompt_data: PromptUpdate):
         if not collection:
             raise HTTPException(status_code=400, detail="Collection not found")
     
-    # BUG #2: We're not updating the updated_at timestamp!
-    # The updated prompt keeps the old timestamp
+    # Update the prompt; set updated_at to the current time
     updated_prompt = Prompt(
         id=existing.id,
         title=prompt_data.title,
@@ -107,7 +149,7 @@ def update_prompt(prompt_id: str, prompt_data: PromptUpdate):
         description=prompt_data.description,
         collection_id=prompt_data.collection_id,
         created_at=existing.created_at,
-        updated_at=existing.updated_at  # BUG: Should be get_current_time()
+        updated_at=get_current_time()
     )
     
     return storage.update_prompt(prompt_id, updated_prompt)
@@ -148,13 +190,63 @@ def create_collection(collection_data: CollectionCreate):
 
 @app.delete("/collections/{collection_id}", status_code=204)
 def delete_collection(collection_id: str):
-    # BUG #4: We delete the collection but don't handle the prompts!
-    # Prompts with this collection_id become orphaned with invalid reference
-    # Should either: delete the prompts, set collection_id to None, or prevent deletion
-    
+    """Delete a collection and its associated prompts by its unique identifier.
+
+    This endpoint removes a collection from storage and also deletes any
+    associated prompts to maintain data integrity.
+
+    Args:
+        collection_id: The unique identifier of the collection to delete.
+
+    Returns:
+        None
+
+    Raises:
+        HTTPException: If the collection with the given ID does not exist (404 Not Found).
+    """
     if not storage.delete_collection(collection_id):
         raise HTTPException(status_code=404, detail="Collection not found")
     
-    # Missing: Handle prompts that belong to this collection!
+    # Delete all of the prompts associated with the deleted collection
+    prompts_to_delete = storage.get_prompts_by_collection(collection_id)
+    for prompt in prompts_to_delete:
+        storage.delete_prompt(prompt.id)
     
     return None
+
+@app.patch("/prompts/{prompt_id}", response_model=Prompt)
+def partial_update_prompt(prompt_id: str, prompt_data: PromptUpdate):
+    """Partially update a prompt by its unique identifier.
+
+    This endpoint allows updating only the fields that are provided in the request body.
+    The updated_at timestamp is always set to the current time on successful updates.
+
+    Args:
+        prompt_id: The unique identifier of the prompt to update.
+        prompt_data: An object containing the fields to update in the prompt.
+
+    Returns:
+        The updated Prompt object.
+
+    Raises:
+        HTTPException: If the prompt with the given ID does not exist (404 Not Found).
+    """
+    existing = storage.get_prompt(prompt_id)
+    if not existing:
+        raise HTTPException(status_code=404, detail="Prompt not found")
+
+    # Update only the fields given
+    if prompt_data.title is not None:
+        existing.title = prompt_data.title
+    if prompt_data.content is not None:
+        existing.content = prompt_data.content
+    if prompt_data.description is not None:
+        existing.description = prompt_data.description
+    if prompt_data.collection_id is not None:
+        existing.collection_id = prompt_data.collection_id
+
+    # Update the updated_at timestamp
+    existing.updated_at = get_current_time()
+
+    # Save the updated prompt to storage
+    return storage.update_prompt(prompt_id, existing)

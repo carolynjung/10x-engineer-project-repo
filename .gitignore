@@ -1,0 +1,21 @@
+# Python bytecode
+__pycache__/
+*.pyc
+
+# Virtual environment
+venv/
+env/
+
+# Environment variable files
+.env
+
+# IDE specific files
+.vscode/
+.idea/
+
+# Test outputs
+*.coverage
+
+# Other files
+docs/README.md.ORIG
+backend/requirements.txt.ORIG

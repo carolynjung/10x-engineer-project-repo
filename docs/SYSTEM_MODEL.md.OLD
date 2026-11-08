@@ -1,0 +1,56 @@
+# System Architecture Overview
+
+## Framework and Language
+- **Language**: Python
+- **Framework**: Flask
+
+## Architecture Overview
+
+The project is structured into several key modules, each with specific responsibilities and dependencies.
+
+| File/Module                | Purpose                                     | Dependencies                     |
+|----------------------------|---------------------------------------------|----------------------------------|
+| `main.py`                  | Entry point for the application initializing the app and routes. | `app/__init__.py`, `app/api.py`, `app/utils.py` |
+| `requirements.txt`         | Lists all dependencies required for the project. | N/A                              |
+| `tests/__init__.py`       | Initializes the testing package.           | N/A                              |
+| `tests/conftest.py`       | Configuration file for defining test fixtures and hooks. | N/A                              |
+| `tests/test_api.py`       | Contains unit tests for validating API functionality. | `main.py`                        |
+| `app/__init__.py`         | Initializes the app package and sets configurations. | N/A                              |
+| `app/api.py`              | Defines API routes and handles requests/responses. | `app/models.py`, `app/utils.py` |
+| `app/models.py`           | Defines data models and manages database interactions. | N/A                              |
+| `app/storage.py`          | Manages data storage solutions.            | May interact with `models.py`   |
+| `app/utils.py`            | Includes utility functions and helper methods. | Used by `api.py`, `models.py`   |
+
+## Main Entry Point
+The main entry point of the application is `main.py`. It starts the Flask application and registers routes from the `app/api.py` module, which handles incoming requests.
+
+## Codebase Structure
+The codebase is organized into a logical directory structure:
+- **Root Directory**: Contains general project files such as `README.md` and the `docs/` folder for documentation.
+- **Backend Directory**: Contains application-specific files:
+  - **`main.py`**: Entry point for starting the application.
+  - **`requirements.txt`**: Lists required dependencies.
+  - **`tests/`**: Contains the testing framework.
+  - **`app/`**: Contains the core application code.
+
+### Sub-routes Registration
+Routes defined in `app/api.py` are registered with the main app instance in `main.py`. The `app/__init__.py` file typically serves as a central coordinator, where the Flask app is instantiated, configurations set, and routes loaded. Here's how it generally works:
+
+1. **`main.py`**: Imports and initializes the app instance.
+2. **`app/__init__.py`**: Contains code to configure the app and import routes from `app/api.py`.
+3. **`app/api.py`**: Defines route handlers that respond to specific API calls.
+
+### Diagram Representation
+```
+[ main.py ]
+      |
+      +---> [ app/__init__.py ] ---> [ app/api.py ]
+                          |
+                          +---> [ app/models.py ]
+                          |
+                          +---> [ app/storage.py ]
+                          |
+                          +---> [ app/utils.py ]
+```
+
+This organized structure allows for efficient development and maintenance, with clear delineation of responsibilities for each module.
