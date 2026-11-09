@@ -46,8 +46,8 @@ Your job over the next 4 weeks is to transform this into a **production-ready, f
 **Clone the Repository**:
    Open your terminal and run the following command:
    ```bash
-   git clone <your-repo-url>
-   cd promptlab
+   git clone <repo-url>
+   cd 10x-engineer-project-repo
    ```
 **Set Up the Backend**:
    Navigate to the backend directory and install the required Python packages:
@@ -76,7 +76,7 @@ pytest tests/ -v
 ## Project Structure
 
 ```
-promptlab/
+10x-engineer-project-repo/
 ├── README.md                    # You are here
 ├── PROJECT_BRIEF.md             # Your assignment details
 ├── GRADING_RUBRIC.md            # How you'll be graded
@@ -98,6 +98,9 @@ promptlab/
 ├── frontend/                    # You'll create this in Week 4
 ├── specs/                       # You'll create this in Week 2
 ├── docs/                        # You'll create this in Week 2
+│   ├── prompt-log.md
+│   ├── SYSTEM_MODEL.md
+│   ├── ai-verification-note.md
 └── .github/                     # You'll set up CI/CD in Week 3
 ```
 
