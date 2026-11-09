@@ -17,5 +17,8 @@ env/
 *.coverage
 
 # Other files
-docs/README.md.ORIG
+README.md.ORIG
+docs/SYSTEM_MODEL.md.OLD
+docs/prompt-log-TEMPLATE.md
+docs/SESSION1.md
 backend/requirements.txt.ORIG
