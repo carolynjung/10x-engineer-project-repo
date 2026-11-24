@@ -7,7 +7,6 @@ Students should expand these tests significantly in Week 3.
 import pytest
 from fastapi.testclient import TestClient
 
-
 class TestHealth:
     """Tests for health endpoint."""
     
@@ -128,6 +127,17 @@ class TestPrompts:
         # Newest (Second) should be first
         assert prompts[0]["title"] == "Second"  # Will fail until Bug #3 fixed
 
+    def test_patch_single_field(self, client, sample_prompt_data):
+        created = client.post("/prompts", json=sample_prompt_data).json()
+        r = client.patch(f"/prompts/{created['id']}", json={"description": "new"})
+        assert r.status_code == 200
+        assert r.json()["description"] == "new"
+        assert r.json()["title"] == sample_prompt_data["title"]
+
+    def test_patch_unknown_collection(self, client, sample_prompt_data):
+        created = client.post("/prompts", json=sample_prompt_data).json()
+        r = client.patch(f"/prompts/{created['id']}", json={"collection_id": "nope"})
+        assert r.status_code == 400    
 
 class TestCollections:
     """Tests for collection endpoints."""

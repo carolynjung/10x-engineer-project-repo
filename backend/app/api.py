@@ -14,6 +14,7 @@ from app.storage import storage
 from app.utils import sort_prompts_by_date, filter_prompts_by_collection, search_prompts
 from app import __version__
 
+from app.models import PromptPatch, CollectionPatch
 
 app = FastAPI(
     title="PromptLab API",
@@ -215,7 +216,7 @@ def delete_collection(collection_id: str):
     return None
 
 @app.patch("/prompts/{prompt_id}", response_model=Prompt)
-def partial_update_prompt(prompt_id: str, prompt_data: PromptUpdate):
+def partial_update_prompt(prompt_id: str, prompt_data: PromptPatch):
     """Partially update a prompt by its unique identifier.
 
     This endpoint allows updating only the fields that are provided in the request body.
@@ -231,22 +232,24 @@ def partial_update_prompt(prompt_id: str, prompt_data: PromptUpdate):
     Raises:
         HTTPException: If the prompt with the given ID does not exist (404 Not Found).
     """
+    
     existing = storage.get_prompt(prompt_id)
-    if not existing:
+    if existing is None:
         raise HTTPException(status_code=404, detail="Prompt not found")
 
-    # Update only the fields given
-    if prompt_data.title is not None:
-        existing.title = prompt_data.title
-    if prompt_data.content is not None:
-        existing.content = prompt_data.content
-    if prompt_data.description is not None:
-        existing.description = prompt_data.description
-    if prompt_data.collection_id is not None:
-        existing.collection_id = prompt_data.collection_id
+    # Only the fields the client actually sent
+    updates = prompt_data.model_dump(exclude_unset=True)
+
+    # title and content are required on a prompt, so they cannot be cleared
+    for field in ("title", "content"):
+        if field in updates and updates[field] is None:
+            raise HTTPException(status_code=422, detail=f"{field} cannot be null")
+
+    collection_id = updates.get("collection_id")
+    if collection_id and storage.get_collection(collection_id) is None:
+        raise HTTPException(status_code=400, detail="Collection not found")
 
     # Update the updated_at timestamp
-    existing.updated_at = get_current_time()
-
+    updated = existing.model_copy(update={**updates, "updated_at": get_current_time()})
     # Save the updated prompt to storage
-    return storage.update_prompt(prompt_id, existing)
+    return storage.update_prompt(prompt_id, updated)

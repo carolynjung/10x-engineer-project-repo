@@ -30,6 +30,11 @@ class PromptCreate(PromptBase):
 class PromptUpdate(PromptBase):
     pass
 
+class PromptPatch(BaseModel):
+    title: Optional[str] = Field(None, min_length=1, max_length=200)
+    content: Optional[str] = Field(None, min_length=1)
+    description: Optional[str] = Field(None, max_length=500)
+    collection_id: Optional[str] = None
 
 class Prompt(PromptBase):
     id: str = Field(default_factory=generate_id)
@@ -58,7 +63,10 @@ class Collection(CollectionBase):
     class Config:
         from_attributes = True
 
-
+class CollectionPatch(BaseModel):
+    name: Optional[str] = Field(None, min_length=1, max_length=100)
+    description: Optional[str] = Field(None, max_length=500)
+    
 # ============== Response Models ==============
 
 class PromptList(BaseModel):
