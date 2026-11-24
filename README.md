@@ -1,167 +1,122 @@
 # PromptLab
 
-**Your AI Prompt Engineering Platform**
+PromptLab is a REST API for storing, organizing and searching AI prompt templates.
+Think "Postman for prompts": teams keep reusable prompts with `{{variables}}`, group them into collections, and find them again by keyword.
 
----
+## Features
 
-## Welcome to the Team! 👋
+- Create, read, replace (PUT), partially update (PATCH) and delete prompts
+- Group prompts into collections; deleting a collection deletes its prompts
+- Filter prompts by collection and search by title or description
+- Results sorted newest first
+- Input validation with clear 4xx errors (Pydantic)
+- Interactive API docs at /docs (Swagger UI) and /redoc
+- Health check endpoint for monitoring
 
-Congratulations on joining the PromptLab engineering team! You've been brought on to help us build the next generation of prompt engineering tools.
+## Tech stack
 
-### What is PromptLab?
+Python 3.10+, FastAPI, Pydantic v2, Uvicorn, pytest. Storage is in memory.
 
-PromptLab is an internal tool for AI engineers to **store, organize, and manage their prompts**. Think of it as a "Postman for Prompts" — a professional workspace where teams can:
+## Prerequisites
 
-- 📝 Store prompt templates with variables (`{{input}}`, `{{context}}`)
-- 📁 Organize prompts into collections
-- 🏷️ Tag and search prompts
-- 📜 Track version history
-- 🧪 Test prompts with sample inputs
-
-### The Current Situation
-
-The previous developer left us with a *partially working* backend. The core structure is there, but:
-
-- There are **several bugs** that need fixing
-- Some **features are incomplete**
-- The **documentation is minimal** (you'll fix that)
-- There are **no tests** worth mentioning
-- **No CI/CD pipeline** exists
-- **No frontend** has been built yet
-
-Your job over the next 4 weeks is to transform this into a **production-ready, full-stack application**.
-
----
-
-## Quick Start: Run Locally
-
-### Prerequisites
-
-- Python 3.10+
-- Node.js 18+ (for Week 4)
+- Python 3.10 or newer (`python --version`)
+- pip
 - Git
+- No environment variables, database or API keys are required.
 
-### Installation Steps
-
-**Clone the Repository**:
-   Open your terminal and run the following command:
-   ```bash
-   git clone <repo-url>
-   cd 10x-engineer-project-repo
-   ```
-**Set Up the Backend**:
-   Navigate to the backend directory and install the required Python packages:
-   ```bash
-   cd backend
-   pip install -r requirements.txt
-   ```
-**Run the Backend**:
-   Start the FastAPI application with the following command:
-   ```bash
-   python main.py
-   ```   
-API runs at: http://localhost:8000
-
-API docs at: http://localhost:8000/docs
-
-### Run Tests
-
+## Installation
 ```bash
-cd backend
-pytest tests/ -v
+    git clone https://github.com/carolynjung/10x-engineer-project-repo.git
+    cd 10x-engineer-project-repo
+    python -m venv .venv
+    source .venv/bin/activate          # Windows: venv\Scripts\activate
+    pip install -r backend/requirements.txt
 ```
-
----
-
-## Project Structure
-
+## Quick start
+```bash
+    cd backend
+    python main.py
 ```
+- API base URL: http://127.0.0.1:8000 (the root `/` returns 404 by design; try `/health`)
+- Swagger UI: http://127.0.0.1:8000/docs
+
+In a second terminal:
+```bash
+    curl http://127.0.0.1:8000/health
+    # {"status":"healthy","version":"0.1.0"}
+
+    curl -X POST http://127.0.0.1:8000/prompts \
+      -H "Content-Type: application/json" \
+      -d '{"title":"Summarize","content":"Summarize this: {{text}}"}'
+```
+## API endpoint summary
+
+Full details, request/response examples and error codes: [docs/API_REFERENCE.md](docs/API_REFERENCE.md).
+
+| Method | Endpoint | Description | Success |
+|---|---|---|---|
+| GET | /health | Health check and version | 200 |
+| GET | /prompts | List prompts (`collection_id`, `search` query params) | 200 |
+| GET | /prompts/{prompt_id} | Get one prompt | 200 |
+| POST | /prompts | Create a prompt | 201 |
+| PUT | /prompts/{prompt_id} | Replace a prompt (all fields) | 200 |
+| PATCH | /prompts/{prompt_id} | Update only the fields sent | 200 |
+| DELETE | /prompts/{prompt_id} | Delete a prompt | 204 |
+| GET | /collections | List collections | 200 |
+| GET | /collections/{collection_id} | Get one collection | 200 |
+| POST | /collections | Create a collection | 201 |
+| DELETE | /collections/{collection_id} | Delete a collection and its prompts | 204 |
+
+Example: update only the description of a prompt
+```bash
+    curl -X PATCH http://127.0.0.1:8000/prompts/<prompt_id> \
+      -H "Content-Type: application/json" \
+      -d '{"description":"Short summaries for meeting notes"}'
+```
+## Project structure
+```bash
 10x-engineer-project-repo/
-├── README.md                    # You are here
-├── PROJECT_BRIEF.md             # Your assignment details
-├── GRADING_RUBRIC.md            # How you'll be graded
-│
 ├── backend/
 │   ├── app/
-│   │   ├── __init__.py
-│   │   ├── api.py              # FastAPI routes (has bugs!)
-│   │   ├── models.py           # Pydantic models
-│   │   ├── storage.py          # In-memory storage
-│   │   └── utils.py            # Helper functions
-│   ├── tests/
-│   │   ├── __init__.py
-│   │   ├── test_api.py         # Basic tests
-│   │   └── conftest.py         # Test fixtures
-│   ├── main.py                 # Entry point
+│   │   ├── api.py        FastAPI routes
+│   │   ├── models.py     Pydantic request/response models
+│   │   ├── storage.py    In-memory storage class
+│   │   └── utils.py      Sorting, filtering, search helpers
+│   ├── tests/            pytest suite and fixtures
+│   ├── main.py           Entry point (uvicorn)
 │   └── requirements.txt
-│
-├── frontend/                    # You'll create this in Week 4
-├── specs/                       # You'll create this in Week 2
-├── docs/                        # You'll create this in Week 2
-│   ├── prompt-log.md
-│   ├── SYSTEM_MODEL.md
-│   ├── ai-verification-note.md
-└── .github/                     # You'll set up CI/CD in Week 3
+├── docs/                 API reference, system model, AI logs
+├── specs/                Feature specifications
+└── frontend/             (planned)
 ```
 
 ---
+## Development setup
+```bash
+    cd backend
+    pytest tests/ -v                       # run tests
+    pytest tests/ --cov=app                # with coverage
+    python -m pydoc app.storage            # view docstrings
+```
+- Code style: PEP 8, type hints on all functions, Google-style docstrings.
+- AI assistant rules for this repo live in `.continuerules`.
+- Data resets every time the server restarts.
 
-## Your Mission
+## Contributing
 
-### 🧪 Experimentation Encouraged!
-While we provide guidelines, **you are the engineer**. If you see a better way to solve a problem using AI, do it!
-- Want to swap the storage layer for a real database? **Go for it.**
-- Want to add Authentication? **Do it.**
-- Want to rewrite the API in a different style? **As long as tests pass, you're clear.**
+1. Create a branch from `main`: `git checkout -b feature/<your-short-name>`.
+2. Make the change with tests. New endpoints need a success test and an error test.
+3. Run `pytest tests/ -v`; all tests must pass.
+4. Update `docs/API_REFERENCE.md` and this README if an endpoint changes.
+5. Write a clear commit message (what and why) and open a pull request.
 
-The goal is to learn how to build *better* software *faster* with AI. Don't be afraid to break things and rebuild them better.
+## Known issues
 
-### Week 1: Fix the Backend
-- Understand this codebase using AI
-- Find and fix the bugs
-- Implement missing features
+- Storage is in memory; nothing persists across restarts.
+- No authentication.
+- `datetime.utcnow()` triggers deprecation warnings on Python 3.12+.
+- Search does not look at prompt `content`.
 
-### Week 2: Document Everything
-- Write proper documentation
-- Create feature specifications
-- Set up coding standards
+## Roadmap
 
-### Week 3: Make it Production-Ready
-- Write comprehensive tests
-- Implement new features with TDD
-- Set up CI/CD and Docker
-
-### Week 4: Build the Frontend
-- Create a React frontend
-- Connect it to the backend
-- Polish the user experience
-
----
-
-## API Endpoints (Current)
-
-| Method | Endpoint | Description | Status |
-|--------|----------|-------------|--------|
-| GET | `/health` | Health check | ✅ Works |
-| GET | `/prompts` | List all prompts | ✅ Works |
-| GET | `/prompts/{id}` | Get single prompt | ✅ Works |
-| POST | `/prompts` | Create prompt | ✅ Works |
-| PUT | `/prompts/{id}` | Update prompt | ✅ Works |
-| DELETE | `/prompts/{id}` | Delete prompt | ✅ Works |
-| GET | `/collections` | List collections | ✅ Works |
-| GET | `/collections/{id}` | Get collection | ✅ Works |
-| POST | `/collections` | Create collection | ✅ Works |
-| DELETE | `/collections/{id}` | Delete collection | ✅ Works |
-
----
-
-## Tech Stack
-
-- **Backend**: Python 3.10+, FastAPI, Pydantic
-- **Frontend**: React, Vite (Week 4)
-- **Testing**: pytest
-- **DevOps**: Docker, GitHub Actions (Week 3)
-
----
-
-Good luck, and welcome to the team! 🚀
+Specs for upcoming features: [prompt versions](specs/prompt-versions.md), [tagging](specs/tagging-system.md).
