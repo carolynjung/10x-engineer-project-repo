@@ -16,8 +16,14 @@ env/
 # Test outputs
 *.coverage
 
+# Continue: keep rules and prompts; ignore everything else
+.continue/*
+!.continue/rules/
+!.continue/prompts/
+
 # Other files
 README.md.ORIG
+README.md.BK
 docs/SYSTEM_MODEL.md.OLD
 docs/prompt-log-TEMPLATE.md
 docs/SESSION1.md
