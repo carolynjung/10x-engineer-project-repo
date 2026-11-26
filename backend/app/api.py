@@ -8,13 +8,11 @@ from app.models import (
     Prompt, PromptCreate, PromptUpdate,
     Collection, CollectionCreate,
     PromptList, CollectionList, HealthResponse,
-    get_current_time
+    get_current_time, PromptPatch, CollectionPatch
 )
 from app.storage import storage
 from app.utils import sort_prompts_by_date, filter_prompts_by_collection, search_prompts
 from app import __version__
-
-from app.models import PromptPatch, CollectionPatch
 
 """ Sets up basic FastAPI application metadata """
 app = FastAPI(
@@ -186,9 +184,6 @@ def update_prompt(prompt_id: str, prompt_data: PromptUpdate):
     
     return storage.update_prompt(prompt_id, updated_prompt)
 
-
-# NOTE: PATCH endpoint is missing! Students need to implement this.
-# It should allow partial updates (only update provided fields)
 @app.patch("/prompts/{prompt_id}", response_model=Prompt)
 def partial_update_prompt(prompt_id: str, prompt_data: PromptPatch):
     """Partially update a prompt by its unique identifier.

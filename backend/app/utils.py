@@ -3,9 +3,6 @@
 from typing import List
 from app.models import Prompt
 
-
-from typing import List
-
 def sort_prompts_by_date(prompts: List[Prompt], descending: bool = True) -> List[Prompt]:
     """Sorts a list of prompts based on their creation date.
 
