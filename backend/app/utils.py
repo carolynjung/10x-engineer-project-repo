@@ -4,7 +4,8 @@ from typing import List
 from app.models import Prompt
 
 def sort_prompts_by_date(prompts: List[Prompt], descending: bool = True) -> List[Prompt]:
-    """Sorts a list of prompts based on their creation date.
+    """
+    Return a new list sorted by created_at, newest first by default.
 
     Args:
         prompts (List[Prompt]): A list of prompts to sort.
@@ -19,7 +20,8 @@ def sort_prompts_by_date(prompts: List[Prompt], descending: bool = True) -> List
 
 
 def filter_prompts_by_collection(prompts: List[Prompt], collection_id: str) -> List[Prompt]:
-    """Filters prompts by a specific collection ID.
+    """
+    Return the prompts whose collection_id equals the given ID; empty list if none.
 
     Args:
         prompts (List[Prompt]): A list of prompts to filter.
@@ -40,7 +42,7 @@ def filter_prompts_by_collection(prompts: List[Prompt], collection_id: str) -> L
 
 def search_prompts(prompts: List[Prompt], query: str) -> List[Prompt]:
     """
-    Filters the provided list of prompts based on a search query.
+    Return prompts whose title or description contains the query, ignoring case.
     The search is case-insensitive and considers both titles and descriptions.
 
     Args:
@@ -71,8 +73,8 @@ def search_prompts(prompts: List[Prompt], query: str) -> List[Prompt]:
 
 
 def validate_prompt_content(content: str) -> bool:
-    """Check if prompt content is valid.
-    
+    """
+    Return True if content has at least 10 characters after trimming whitespace. 
     A valid prompt should not be empty, contain only whitespace, and must have at least 10 characters.
 
     Args:
@@ -94,7 +96,8 @@ def validate_prompt_content(content: str) -> bool:
     return len(content.strip()) >= 10
 
 def extract_variables(content: str) -> List[str]:
-    """Extract template variables from prompt content.
+    """
+    Return the names of all {{variable}} placeholders in a prompt template.
     
     This function scans the input content for variables formatted as {{variable_name}}.
     It returns a list of variable names extracted from this content. The matching is case-sensitive.

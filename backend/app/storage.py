@@ -29,7 +29,7 @@ class Storage:
     
     def create_prompt(self, prompt: Prompt) -> Prompt:
         """
-        Stores the given prompt in the internal storage using its ID.
+        Store the prompt under its ID, overwriting any prompt with the same ID.
 
         Args:
             prompt (Prompt): The Prompt object to create and store.
@@ -41,7 +41,7 @@ class Storage:
     
     def get_prompt(self, prompt_id: str) -> Optional[Prompt]:
         """
-        Retrieves a prompt from the internal storage based on the provided ID.
+        Return the prompt with this ID, or None if it does not exist.
 
         Args:
             prompt_id (str): The ID of the prompt to retrieve.
@@ -52,7 +52,7 @@ class Storage:
     
     def get_all_prompts(self) -> List[Prompt]:
         """
-        Returns a list of all stored prompts in the internal storage.
+        Return all stored prompts as a new list, in the order they were stored.
 
         Returns:
             List[Prompt]: A list of all Prompt objects.
@@ -61,8 +61,7 @@ class Storage:
     
     def update_prompt(self, prompt_id: str, prompt: Prompt) -> Optional[Prompt]:
         """
-        Updates the prompt associated with the given ID in the internal storage.
-        If the prompt ID does not exist, no changes are made.
+        Replace the stored prompt with this ID; return None if the ID does not exist.
 
         Args:
             prompt_id (str): The ID of the prompt to update.
@@ -78,8 +77,7 @@ class Storage:
     
     def delete_prompt(self, prompt_id: str) -> bool:
         """
-        Deletes the prompt associated with the given ID from the internal storage.
-        Returns True if the prompt was successfully deleted, False otherwise.
+        Remove the prompt with this ID; return True if removed, False if not found.
 
         Args:
             prompt_id (str): The ID of the prompt to delete.
@@ -96,7 +94,7 @@ class Storage:
     
     def create_collection(self, collection: Collection) -> Collection:
         """
-        Stores the given collection in the internal storage using its ID.
+        Store the collection under its ID, overwriting any collection with the same ID.
 
         This method adds the provided Collection object to the
         internal storage, allowing retrieval and management of
@@ -113,7 +111,7 @@ class Storage:
     
     def get_collection(self, collection_id: str) -> Optional[Collection]:
         """
-        Retrieves a collection from the internal storage based on the provided ID.
+        Return the collection with this ID, or None if it does not exist.
 
         Args:
             collection_id (str): The ID of the collection to retrieve.
@@ -128,7 +126,7 @@ class Storage:
     
     def get_all_collections(self) -> List[Collection]:
         """
-        Retrieves all collections from the internal storage.
+        Return all stored collections as a new list, in the order they were stored.
 
         This returns a list of all Collection objects stored
         in the internal storage. The list will be empty if no collections
@@ -142,7 +140,7 @@ class Storage:
     
     def delete_collection(self, collection_id: str) -> bool:
         """
-        Deletes a collection associated with the given ID from the internal storage.
+        Remove only the collection, not its prompts; return True if removed, False if not found.
 
         This operation will succeed only if the collection ID exists in
         the internal storage. It returns True if the deletion
@@ -163,7 +161,7 @@ class Storage:
     
     def get_prompts_by_collection(self, collection_id: str) -> List[Prompt]:
         """
-        Retrieves all prompts that belong to the specified collection.
+        Return prompts whose collection_id matches exactly; empty list if none.
 
         This method filters prompts stored in memory by their collection ID.
         If no prompts match the given collection ID, an empty list is returned.
@@ -181,7 +179,7 @@ class Storage:
     
     def clear(self):
         """
-        Clears all stored prompts and collections from memory.
+        Remove all prompts and collections (used by tests between runs).
 
         This method resets the internal storage by removing all entries
         and does not return any value. It effectively empties the storage.

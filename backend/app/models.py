@@ -8,7 +8,7 @@ from uuid import uuid4
 
 def generate_id() -> str:
     """
-    Generates a new random UUID4.
+    Return a new random UUID4 identifier as a string.
 
     Returns:
         str: A string representation of the randomly generated UUID4.
@@ -18,7 +18,7 @@ def generate_id() -> str:
 
 def get_current_time() -> datetime:
     """
-    Retrieves the current UTC time as a naive datetime object.
+    Return the current UTC time as a naive datetime (no timezone).
 
     This function returns the current UTC time without timezone information, which is useful for cases where timezone awareness is not necessary.
 
@@ -50,7 +50,7 @@ class PromptBase(BaseModel):
 
 class PromptCreate(PromptBase):
     """
-    Model for creating a new prompt. It inherits from PromptBase and shares its validation rules.
+    Request body for POST /prompts; same fields and rules as PromptBase. It inherits from PromptBase and shares its validation rules.
 
     This model is used when creating a new prompt object via the API.
 
@@ -64,7 +64,7 @@ class PromptCreate(PromptBase):
 
 class PromptUpdate(PromptBase):
     """
-    Model for updating an existing prompt. It inherits from PromptBase, allowing users to modify fields of a prompt while maintaining validation rules.
+    Request body for PUT /prompts/{id}: a full replacement; omitted optional fields become None. It inherits from PromptBase, allowing users to modify fields of a prompt while maintaining validation rules.
 
     This model is particularly useful for API requests that partially update a prompt's attributes, including title, content, description, and collection_id.
 
@@ -78,7 +78,7 @@ class PromptUpdate(PromptBase):
 
 class PromptPatch(BaseModel):
     """
-    Represents a partial update model for a prompt, allowing specific attributes to be modified.
+    Request body for PATCH /prompts/{id}: every field optional; only fields sent are changed.
 
     This model is intended for API requests where users want to update certain fields of a prompt without changing all attributes.
 
@@ -133,7 +133,7 @@ class CollectionBase(BaseModel):
 
 class CollectionCreate(CollectionBase):
     """
-    Model for creating a new collection, inheriting attributes and validation from CollectionBase.
+    Request body for POST /collections; same fields and rules as CollectionBase.
 
     This model is used specifically for requests to create new collections via the API but does not introduce any new attributes.
     """

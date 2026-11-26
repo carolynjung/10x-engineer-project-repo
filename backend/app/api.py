@@ -39,7 +39,7 @@ app.add_middleware(
 @app.get("/health", response_model=HealthResponse)
 def health_check():
     """
-    Perform a health check on the API.
+    Return the API status (“healthy”) and current version.
 
     This endpoint checks the status of the application and returns its current version.
 
@@ -56,7 +56,8 @@ def list_prompts(
     collection_id: Optional[str] = None,
     search: Optional[str] = None
 ):
-    """List all prompts optionally filtered by collection or search query.
+    """
+    Return prompts newest first, optionally filtered by collection_id and search.
 
     This endpoint retrieves prompts, filters them by the specified collection ID,
     or searches based on a query. The results are sorted in descending order
@@ -88,7 +89,8 @@ def list_prompts(
 
 @app.get("/prompts/{prompt_id}", response_model=Prompt)
 def get_prompt(prompt_id: str):
-    """Retrieve a prompt by its unique identifier.
+    """
+    Return the prompt with this ID, or raise 404 if it does not exist.
 
     Args:
         prompt_id: The unique identifier of the prompt to retrieve.
@@ -112,7 +114,7 @@ def get_prompt(prompt_id: str):
 @app.post("/prompts", response_model=Prompt, status_code=201)
 def create_prompt(prompt_data: PromptCreate):
     """
-    Create a new prompt based on the provided prompt data.
+    Create a prompt and return it with its generated ID and timestamps.
 
     This function validates the existence of the collection if a collection ID is provided
     and creates a new prompt in storage using the provided data.
@@ -139,7 +141,8 @@ def create_prompt(prompt_data: PromptCreate):
 
 @app.put("/prompts/{prompt_id}", response_model=Prompt)
 def update_prompt(prompt_id: str, prompt_data: PromptUpdate):
-    """Update an existing prompt by its unique identifier.
+    """
+    Replace a prompt completely (PUT); omitted optional fields become None.
 
     This endpoint updates only the fields that are provided in the request body
     and updates the updated_at timestamp to the current time.
@@ -180,7 +183,8 @@ def update_prompt(prompt_id: str, prompt_data: PromptUpdate):
 
 @app.patch("/prompts/{prompt_id}", response_model=Prompt)
 def partial_update_prompt(prompt_id: str, prompt_data: PromptPatch):
-    """Partially update a prompt by its unique identifier.
+    """
+    Update only the fields sent (PATCH) and return the updated prompt.
 
     This endpoint allows updating only the fields that are provided in the request body.
     The updated_at timestamp is always set to the current time on successful updates.
@@ -222,7 +226,8 @@ def partial_update_prompt(prompt_id: str, prompt_data: PromptPatch):
 
 @app.delete("/prompts/{prompt_id}", status_code=204)
 def delete_prompt(prompt_id: str):
-    """Delete a prompt by its unique identifier.
+    """
+    Delete the prompt with this ID, or raise 404 if it does not exist.
 
     This endpoint attempts to remove a prompt from the storage. If the prompt does not exist,
     a 404 HTTPException is raised.
@@ -246,7 +251,7 @@ def delete_prompt(prompt_id: str):
 @app.get("/collections", response_model=CollectionList)
 def list_collections():
     """
-    Retrieve a list of all collections stored in memory.
+    Return all collections and their total count.
 
     This endpoint returns a CollectionList object containing all collections and
     the total number of collections available.
@@ -262,7 +267,7 @@ def list_collections():
 @app.get("/collections/{collection_id}", response_model=Collection)
 def get_collection(collection_id: str):
     """
-    Retrieve a collection by its unique identifier.
+    Return the collection with this ID, or raise 404 if it does not exist.
 
     This function fetches a collection from the storage and raises a 404 HTTPException if not found.
 
@@ -284,7 +289,7 @@ def get_collection(collection_id: str):
 @app.post("/collections", response_model=Collection, status_code=201)
 def create_collection(collection_data: CollectionCreate):
     """
-    Create a new collection based on the provided collection data.
+    Create a collection and return it with its generated ID and creation time.
 
     This function accepts collection creation data, validates it, and creates
     a new collection in the storage system.
@@ -301,7 +306,8 @@ def create_collection(collection_data: CollectionCreate):
 
 @app.delete("/collections/{collection_id}", status_code=204)
 def delete_collection(collection_id: str):
-    """Delete a collection and its associated prompts by its unique identifier.
+    """
+    Delete a collection and its associated prompts by its unique identifier.
 
     This endpoint removes a collection from storage and also deletes any
     associated prompts to maintain data integrity.
