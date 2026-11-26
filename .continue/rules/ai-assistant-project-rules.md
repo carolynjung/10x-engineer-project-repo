@@ -66,6 +66,7 @@ All commands run from backend/. Imports are absolute from `app`, e.g. `from app.
   - 404 when the resource in the URL path does not exist.
   - 400 when the request body references another resource that does not exist (e.g. collection_id).
   - 422 for invalid input. Prefer Pydantic Field constraints over manual checks.
+  - 409 when the request conflicts with the current state (e.g. restoring the version that is already current); detail describes the state, e.g. "Version 2 is already the current version".
   - 201 for create, 204 with no body for delete, 200 otherwise.
 - detail strings: exactly "<Resource> not found" (e.g. "Prompt not found", "Collection not found").
   Field-level messages: "<field> <problem>", e.g. "title cannot be null".
