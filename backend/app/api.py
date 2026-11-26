@@ -130,7 +130,7 @@ def create_prompt(prompt_data: PromptCreate):
     # Validate collection exists if provided
     if prompt_data.collection_id:
         collection = storage.get_collection(prompt_data.collection_id)
-        if not collection:
+        if collection is None:
             raise HTTPException(status_code=400, detail="Collection not found")
     
     prompt = Prompt(**prompt_data.model_dump())
@@ -156,13 +156,13 @@ def update_prompt(prompt_id: str, prompt_data: PromptUpdate):
         HTTPException: If the prompt is associated with a non-existent collection (400 Bad Request).
     """
     existing = storage.get_prompt(prompt_id)
-    if not existing:
+    if existing is None:
         raise HTTPException(status_code=404, detail="Prompt not found")
     
     # Validate collection if provided
     if prompt_data.collection_id:
         collection = storage.get_collection(prompt_data.collection_id)
-        if not collection:
+        if collection is None:
             raise HTTPException(status_code=400, detail="Collection not found")
     
     # Update the prompt; set updated_at to the current time
@@ -246,7 +246,7 @@ def delete_prompt(prompt_id: str):
 @app.get("/collections", response_model=CollectionList)
 def list_collections():
     """
-    Retrieve a list of all collections stored in the database.
+    Retrieve a list of all collections stored in memory.
 
     This endpoint returns a CollectionList object containing all collections and
     the total number of collections available.
@@ -276,7 +276,7 @@ def get_collection(collection_id: str):
         HTTPException: If the collection with the given ID does not exist (404 Not Found).
     """
     collection = storage.get_collection(collection_id)
-    if not collection:
+    if collection is None:
         raise HTTPException(status_code=404, detail="Collection not found")
     return collection
 

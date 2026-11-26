@@ -49,9 +49,6 @@ def search_prompts(prompts: List[Prompt], query: str) -> List[Prompt]:
     Returns:
         List[Prompt]: A list of prompts where the query matches either the title or
             description. Returns an empty list if no matches are found.
-
-    Raises:
-        ValueError: If prompts is empty or contains non-Prompt instances.
     
     Example:
         >>> from app.models import Prompt

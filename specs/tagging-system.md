@@ -124,8 +124,8 @@ Response 200:
 ## 6. Error conditions and edge cases
 | Case | Result |
 |---|---|
-| Tag 33+ chars | 422 "Tag must be 1-32 characters" |
-| Tag "" or "   " | 422 "Tag must be 1-32 characters" |
+| Tag 33+ chars | 422 "tag must be 1-32 characters" |
+| Tag "" or "   " | 422 "tag must be 1-32 characters" |
 | Tag "c++", "two words", "a--b", "-x" | 422 format message |
 | 11+ tags after de-dup | 422 "tags must contain at most 10 items" |
 | ["SQL", "sql"] | stored once as "sql" |

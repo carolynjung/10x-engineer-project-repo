@@ -29,7 +29,7 @@ Python 3.10+, FastAPI, Pydantic v2, Uvicorn, pytest. Storage is in memory.
     git clone https://github.com/carolynjung/10x-engineer-project-repo.git
     cd 10x-engineer-project-repo
     python -m venv .venv
-    source .venv/bin/activate          # Windows: venv\Scripts\activate
+    source .venv/bin/activate          # MacOS; On Windows use venv\Scripts\activate
     pip install -r backend/requirements.txt
 ```
 ## Quick start

@@ -1,7 +1,7 @@
 # Agent effect note
 
 **Rules file:** `.continue/rules/ai-assistant-project-rules.md` 
-> (commit dae47f048595d94b39eac68c183299180d2ab559)
+> (commit 8194449)
 
 **Tool / model:** Continue with OpenAI GPT-4o-mini (via OpenRouter)
 
@@ -70,7 +70,7 @@ def test_partial_update_collection():
 
 ```
 
-## After (with .continuerules)
+## After (with .continue/rules/ai-assistant-project-rules.md)
 ```python
 api.py
 
