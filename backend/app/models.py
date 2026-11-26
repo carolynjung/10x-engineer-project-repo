@@ -155,19 +155,6 @@ class Collection(CollectionBase):
 
     class Config:
         from_attributes = True
-
-class CollectionPatch(BaseModel):
-    """
-    Represents a partial update model for a collection, allowing specific attributes to be modified.
-
-    This model is intended for API requests where users wish to update certain fields of a collection without changing all attributes. The name and description can be provided separately.
-
-    Attributes:
-        name (Optional[str]): An optional name for the collection, limited to 1-100 characters if provided.
-        description (Optional[str]): An optional description of the collection, capped at 500 characters if provided.
-    """
-    name: Optional[str] = Field(None, min_length=1, max_length=100)
-    description: Optional[str] = Field(None, max_length=500)
     
 # ============== Response Models ==============
 

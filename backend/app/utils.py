@@ -14,8 +14,6 @@ def sort_prompts_by_date(prompts: List[Prompt], descending: bool = True) -> List
     Returns:
         List[Prompt]: A sorted list of prompts based on the creation date.
 
-    Raises:
-        ValueError: If the prompts list is empty or contains invalid Prompt instances.
     """
     return sorted(prompts, key=lambda p: p.created_at, reverse=descending)
 
@@ -54,6 +52,18 @@ def search_prompts(prompts: List[Prompt], query: str) -> List[Prompt]:
 
     Raises:
         ValueError: If prompts is empty or contains non-Prompt instances.
+    
+    Example:
+        >>> from app.models import Prompt
+        >>> prompts = [
+        ...     Prompt(title="Summarize", content="Summarize: {{text}}"),
+        ...     Prompt(title="Review", content="Review code", description="For SUMMARY checks"),
+        ...     Prompt(title="Translate", content="Summarize later"),
+        ... ]
+        >>> [p.title for p in search_prompts(prompts, "summ")]
+        ['Summarize', 'Review']
+        >>> search_prompts(prompts, "missing")
+        []
     """
     query_lower = query.lower()
     return [
@@ -74,8 +84,13 @@ def validate_prompt_content(content: str) -> bool:
     Returns:
         bool: True if the prompt content is valid, otherwise False. If the content is None or only whitespace, returns False.
 
-    Raises:
-        None: This function does not raise any exceptions but returns False for invalid content.
+    Example:
+        >>> validate_prompt_content("Summarize this text")
+        True
+        >>> validate_prompt_content("   short   ")
+        False
+        >>> validate_prompt_content("")
+        False
     """
     if not content or not content.strip():
         return False
@@ -94,9 +109,14 @@ def extract_variables(content: str) -> List[str]:
     Returns:
         List[str]: A list of variable names extracted from the content. Returns an empty list if no
             variables are found.
-
-    Raises:
-        None: This function does not raise any exceptions.
+    
+    Example:
+        >>> extract_variables("Hi {{name}}, see {{doc_id}} and {{name}}")
+        ['name', 'doc_id', 'name']
+        >>> extract_variables("Hi {{ name }}")
+        []
+        >>> extract_variables("No variables here")
+        []
     """
     import re
     pattern = r'\{\{(\w+)\}\}'

@@ -8,7 +8,7 @@ from app.models import (
     Prompt, PromptCreate, PromptUpdate,
     Collection, CollectionCreate,
     PromptList, CollectionList, HealthResponse,
-    get_current_time, PromptPatch, CollectionPatch
+    get_current_time, PromptPatch
 )
 from app.storage import storage
 from app.utils import sort_prompts_by_date, filter_prompts_by_collection, search_prompts
@@ -45,9 +45,6 @@ def health_check():
 
     Returns:
         HealthResponse: An object containing the status and version of the API.
-
-    Raises:
-        None
     """
     return HealthResponse(status="healthy", version=__version__)
 
@@ -71,9 +68,6 @@ def list_prompts(
 
     Returns:
         A PromptList object containing the filtered and sorted prompts.
-
-    Raises:
-        None
     """
     prompts = storage.get_all_prompts()
     
@@ -260,9 +254,6 @@ def list_collections():
     Returns:
         CollectionList: An object containing a list of collections and the total
         count of collections.
-
-    Raises:
-        None
     """
     collections = storage.get_all_collections()
     return CollectionList(collections=collections, total=len(collections))
@@ -303,9 +294,6 @@ def create_collection(collection_data: CollectionCreate):
 
     Returns:
         Collection: The created Collection object.
-
-    Raises:
-        None
     """
     collection = Collection(**collection_data.model_dump())
     return storage.create_collection(collection)
