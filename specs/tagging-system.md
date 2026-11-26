@@ -24,7 +24,7 @@ Non-goals: tag colors or descriptions, renaming a tag everywhere, tag hierarchie
 5. Changing only tags does not create a version or change current_version.
 
 
-## 3. User stories (UC) and acceptance criteria (UC)
+## 3. User stories (US) and acceptance criteria (AC)
 
 US-1 As a user, I want to add tags when creating a prompt.
 - AC-1.1 POST /prompts with `"tags": [" Code-Review ", "python"]` returns 201 with
